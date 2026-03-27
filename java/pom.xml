@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
 
     <name>Shield Java SDK</name>
-    <description>Official Shield SDK for Java — tamper-proof audit trails</description>
+    <description>Official Java SDK for Shield — tamper-proof audit trails for online business transactions.</description>
     <url>https://getshield.dev</url>
 
     <licenses>
@@ -20,9 +20,18 @@
         </license>
     </licenses>
 
+    <developers>
+        <developer>
+            <id>leehg326</id>
+            <name>leehg326</name>
+            <email>support@getshield.dev</email>
+        </developer>
+    </developers>
+
     <scm>
-        <url>https://github.com/leehg326/shield</url>
-        <connection>scm:git:git://github.com/leehg326/shield.git</connection>
+        <url>https://github.com/shieldapi/shield-sdks</url>
+        <connection>scm:git:git://github.com/shieldapi/shield-sdks.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/shieldapi/shield-sdks.git</developerConnection>
     </scm>
 
     <properties>
@@ -38,4 +47,65 @@
             <version>2.17.0</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.11.2</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.2.7</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <keyname>22F182A3CC1CBCCC4DB3C90B108A3B73FE5962F4</keyname>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.7.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>central</publishingServerId>
+                    <autoPublish>true</autoPublish>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
