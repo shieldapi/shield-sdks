@@ -8,16 +8,16 @@ Official Java SDK for [Shield](https://getshield.dev) — tamper-proof audit tra
 
 ```xml
 <dependency>
-    <groupId>dev.shield</groupId>
+    <groupId>dev.getshield</groupId>
     <artifactId>shield-java</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```groovy
-implementation 'dev.shield:shield-java:0.1.0'
+implementation 'dev.getshield:shield-java:0.1.1'
 ```
 
 ### JitPack
@@ -35,7 +35,7 @@ Add the JitPack repository:
 <dependency>
     <groupId>com.github.leehg326</groupId>
     <artifactId>shield</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 </dependency>
 ```
 
