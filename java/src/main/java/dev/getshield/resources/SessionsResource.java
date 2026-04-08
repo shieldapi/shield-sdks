@@ -26,6 +26,19 @@ public class SessionsResource {
     }
 
     /**
+     * Create a new session with optional metadata.
+     */
+    public ShieldSession create(String title, Map<String, Object> metadata) {
+        Map<String, Object> body = new java.util.HashMap<>();
+        body.put("title", title);
+        if (metadata != null && !metadata.isEmpty()) {
+            body.put("metadata", metadata);
+        }
+        JsonNode response = client.request("POST", "/sessions", body);
+        return client.getObjectMapper().convertValue(response, ShieldSession.class);
+    }
+
+    /**
      * Retrieve a session by ID.
      */
     public JsonNode retrieve(String sessionId) {

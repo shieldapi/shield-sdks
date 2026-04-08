@@ -7,16 +7,20 @@ class Sessions:
     def __init__(self, client):
         self._client = client
 
-    def create(self, title: str) -> Dict[str, Any]:
+    def create(self, title: str, metadata: dict = None) -> Dict[str, Any]:
         """Create a new session.
 
         Args:
             title: Human-readable title for the session.
+            metadata: Optional metadata dict to attach to the session.
 
         Returns:
             Created session object.
         """
-        return self._client._request("POST", "/sessions", json_data={"title": title})
+        payload: Dict[str, Any] = {"title": title}
+        if metadata is not None:
+            payload["metadata"] = metadata
+        return self._client._request("POST", "/sessions", json_data=payload)
 
     def retrieve(self, session_id: str) -> Dict[str, Any]:
         """Retrieve a session by ID.

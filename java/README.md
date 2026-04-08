@@ -17,7 +17,7 @@ Official Java SDK for [Shield](https://getshield.dev) — tamper-proof audit tra
 ### Gradle
 
 ```groovy
-implementation 'dev.getshield:shield-java:0.1.1'
+implementation 'dev.getshield:shield-java:0.1.2'
 ```
 
 ### JitPack
@@ -82,7 +82,7 @@ For enhanced security, provide your HMAC secret:
 ```java
 ShieldClient client = new ShieldClient(
     "sk_live_your_api_key_here",
-    "https://getshield.dev/api/v1",
+    "https://api.getshield.dev/api/v1",
     "hs_your_hmac_secret_here"
 );
 ```
@@ -165,7 +165,7 @@ public class ContractController {
 
 ## Event Types
 
-The SDK includes all 37 events from the Shield Standard Event Taxonomy v1.0:
+The SDK includes all 39 events from the Shield Standard Event Taxonomy v1.0:
 
 | Category | Events |
 |----------|--------|

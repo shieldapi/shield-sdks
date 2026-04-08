@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public class ShieldClient {
 
-    private static final String DEFAULT_BASE_URL = "https://getshield.dev/api/v1";
+    private static final String DEFAULT_BASE_URL = "https://api.getshield.dev/api/v1";
 
     private final String apiKey;
     private final String baseUrl;
