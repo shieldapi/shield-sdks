@@ -1,5 +1,5 @@
 /**
- * Shield Standard Event Taxonomy v1.0 — 37 event types.
+ * Shield Standard Event Taxonomy v1.0 — 39 event types.
  */
 export enum ShieldEventType {
   // Party (5)
@@ -61,12 +61,11 @@ export enum ShieldEventType {
 export interface ShieldEvent {
   id: string;
   session_id: string;
-  participant_id: string;
+  actor: string;
   event_type: ShieldEventType | string;
-  payload: Record<string, unknown>;
-  sequence_num: number;
-  prev_hash: string;
-  event_hash: string;
+  data?: Record<string, unknown>;
+  hash: string;
+  sequence: number;
   created_at: string;
 }
 
@@ -95,13 +94,15 @@ export interface ShieldVerifyResult {
 
 export class ShieldError extends Error {
   public status: number;
-  public code: string;
+  public code?: string;
+  public fields?: Record<string, unknown>;
 
-  constructor(status: number, code: string, message: string) {
+  constructor(status: number, message: string, code?: string, fields?: Record<string, unknown>) {
     super(message);
     this.name = "ShieldError";
     this.status = status;
     this.code = code;
+    this.fields = fields;
   }
 }
 

@@ -69,8 +69,8 @@ export class ShieldClient {
       }
       throw new ShieldError(
         response.status,
-        errorBody.code ?? "unknown_error",
         errorBody.message ?? response.statusText,
+        errorBody.code,
       );
     }
 
