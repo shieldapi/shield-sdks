@@ -90,7 +90,7 @@ app.post("/contracts/:id/sign", async (req, res) => {
     session_id: req.params.id,
     event_type: ShieldEventType.AgreementSigned,
     actor: req.user.email,
-    data: { ip: req.ip, method: "digital" },
+    data: { method: "digital" },
   });
   res.json({ signed: true });
 });
