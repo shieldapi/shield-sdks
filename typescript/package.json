@@ -1,6 +1,6 @@
 {
   "name": "@getshield/js",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Official Shield SDK for JavaScript/TypeScript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
