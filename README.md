@@ -8,7 +8,7 @@ Official client libraries for the [Shield](https://getshield.dev) tamper-proof e
 |----------|---------|---------|--------|
 | JavaScript / TypeScript | [@getshield/js](https://npmjs.com/package/@getshield/js) | `npm install @getshield/js` | [![npm](https://img.shields.io/npm/v/@getshield/js)](https://npmjs.com/package/@getshield/js) |
 | Python | [shield-python](https://pypi.org/project/shield-python/) | `pip install shield-python` | [![PyPI](https://img.shields.io/pypi/v/shield-python)](https://pypi.org/project/shield-python/) |
-| Java | [shield-java](https://github.com/shieldapi/shield-sdks/tree/main/java) | `implementation 'dev.getshield:shield-java:0.2.0'` | [![Maven](https://img.shields.io/maven-central/v/dev.getshield/shield-java)](https://search.maven.org/artifact/dev.getshield/shield-java) |
+| Java | [shield-java](https://github.com/shieldapi/shield-sdks/tree/main/java) | `implementation 'dev.getshield:shield-java:0.3.0'` | [![Maven](https://img.shields.io/maven-central/v/dev.getshield/shield-java)](https://search.maven.org/artifact/dev.getshield/shield-java) |
 
 ## Quick Start
 

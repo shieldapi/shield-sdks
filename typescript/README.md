@@ -5,7 +5,7 @@ Official Shield SDK for JavaScript/TypeScript. Provides a typed client for the S
 ## Installation
 
 ```bash
-npm install @getshield/js@0.2.0
+npm install @getshield/js@0.3.0
 ```
 
 ## Quick Start
