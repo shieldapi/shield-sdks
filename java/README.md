@@ -10,14 +10,14 @@ Official Java SDK for [Shield](https://getshield.dev) — tamper-proof audit tra
 <dependency>
     <groupId>dev.getshield</groupId>
     <artifactId>shield-java</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.1</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```groovy
-implementation 'dev.getshield:shield-java:0.3.0'
+implementation 'dev.getshield:shield-java:0.3.1'
 ```
 
 ## Requirements
@@ -54,12 +54,41 @@ System.out.println("Event recorded: " + event.getHash());
 // Verify the hash chain
 var result = client.verify().session(session.getId());
 System.out.println("Chain valid: " + result.get("valid").asBoolean());
-System.out.println("Total events: " + result.get("total_events").asInt());
-System.out.println("Verified events: " + result.get("verified_events").asInt());
-System.out.println("Broken at: " + result.get("broken_at"));            // null or sequence number
-System.out.println("TSA status: " + result.get("tsa_status").asText()); // "none" | "pending" | "success" | "failed"
-System.out.println("TSA timestamp: " + result.get("tsa_timestamp"));    // null or ISO 8601 timestamp
 ```
+
+## Recording AI Agent Evidence
+
+```java
+import dev.getshield.model.AgentEventRequest;
+import java.security.MessageDigest;
+
+// Hash content locally — never send raw prompts or outputs to Shield
+String promptHash = sha256Hex(myPrompt);   // bare 64-char lowercase hex
+String outputHash = sha256Hex(agentOutput);
+
+ShieldEvent evt = client.agent().logAction(sessionId, AgentEventRequest.builder()
+    .eventType("shield.content.submitted")
+    .agentId("agt-unique-identifier")
+    .agentName("gpt-4o")
+    .agentProvider("OpenAI")
+    .principalUserId("alice@example.com")
+    .promptHash(promptHash)
+    .outputHash(outputHash)
+    .build());
+
+// Helper: bare 64-char hex SHA-256 digest
+static String sha256Hex(String input) throws Exception {
+    MessageDigest md = MessageDigest.getInstance("SHA-256");
+    byte[] bytes = md.digest(input.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    StringBuilder sb = new StringBuilder();
+    for (byte b : bytes) sb.append(String.format("%02x", b));
+    return sb.toString();
+}
+```
+
+At least one of `agentId` or `agentName` is required. Hash fields
+(`promptHash`, `inputHash`, `outputHash`) must be bare 64-character lowercase
+SHA-256 hex digests (no prefix). Invalid values throw `ShieldException`.
 
 ## HMAC Authentication
 
@@ -151,13 +180,13 @@ public class ContractController {
 
 ## Event Types
 
-The SDK includes all 39 events from the Shield Standard Event Taxonomy v1.0:
+The SDK includes all 40 events from the Shield Standard Event Taxonomy v1.0:
 
 | Category | Events |
 |----------|--------|
 | Party | `PARTY_JOINED`, `PARTY_LEFT`, `PARTY_IDENTITY_VERIFIED`, `PARTY_IDENTITY_FAILED`, `PARTY_ROLE_ASSIGNED` |
 | Session | `SESSION_CREATED`, `SESSION_OPENED`, `SESSION_CLOSED`, `SESSION_EXPIRED`, `SESSION_ARCHIVED` |
-| Content | `CONTENT_UPLOADED`, `CONTENT_VIEWED`, `CONTENT_DOWNLOADED`, `CONTENT_DELETED`, `CONTENT_HASH_VERIFIED` |
+| Content | `CONTENT_UPLOADED`, `CONTENT_VIEWED`, `CONTENT_DOWNLOADED`, `CONTENT_DELETED`, `CONTENT_HASH_VERIFIED`, `CONTENT_SUBMITTED` |
 | Negotiation | `NEGOTIATION_TERMS_PROPOSED`, `NEGOTIATION_TERMS_ACCEPTED`, `NEGOTIATION_TERMS_REJECTED`, `NEGOTIATION_TERMS_MODIFIED`, `NEGOTIATION_TERMS_EXPIRED`, `NEGOTIATION_MESSAGE_SENT`, `NEGOTIATION_MESSAGE_READ` |
 | Agreement | `AGREEMENT_DRAFTED`, `AGREEMENT_REVIEWED`, `AGREEMENT_APPROVED`, `AGREEMENT_SIGNED`, `AGREEMENT_COUNTERSIGNED`, `AGREEMENT_VOIDED`, `AGREEMENT_REACHED` |
 | Access | `ACCESS_GRANTED`, `ACCESS_REVOKED`, `ACCESS_ATTEMPTED`, `ACCESS_DENIED` |
@@ -173,10 +202,18 @@ try {
     client.sessions().create("My Session");
 } catch (ShieldException e) {
     System.err.println("Status: " + e.getStatusCode());
-    System.err.println("Code: " + e.getCode());
     System.err.println("Message: " + e.getMessage());
 }
 ```
+
+## Versioning & API compatibility
+
+This SDK follows [Semantic Versioning](https://semver.org/).
+
+- **Pre-1.0** (current): minor-version bumps may ship breaking changes. Pin the full version in your `pom.xml` / `build.gradle`.
+- **1.0 and later**: the public API is stable within a major version. Breaking changes require a major-version bump.
+
+The Shield HTTP API is versioned at the URL path (`/api/v1`). This SDK targets `/api/v1` and will not transparently follow a server-side version bump — a new server major version will be delivered as a new SDK major version so callers opt in explicitly.
 
 ## Links
 

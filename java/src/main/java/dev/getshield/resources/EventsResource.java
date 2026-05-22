@@ -14,9 +14,15 @@ import java.util.Map;
 public class EventsResource {
 
     private final ShieldClient client;
+    private final EventsPiiResource pii;
 
     public EventsResource(ShieldClient client) {
         this.client = client;
+        this.pii = new EventsPiiResource(client);
+    }
+
+    public EventsPiiResource pii() {
+        return pii;
     }
 
     /**

@@ -1,11 +1,14 @@
 from typing import Any, Dict, Optional
 
+from .pii import EventsPii
+
 
 class Events:
     """Record events within Shield sessions."""
 
     def __init__(self, client):
         self._client = client
+        self.pii = EventsPii(client)
 
     def create(
         self,

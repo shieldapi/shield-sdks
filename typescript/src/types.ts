@@ -1,5 +1,5 @@
 /**
- * Shield Standard Event Taxonomy v1.0 — 39 event types.
+ * Shield Standard Event Taxonomy v1.0 — 40 event types.
  */
 export enum ShieldEventType {
   // Party (5)
@@ -16,12 +16,13 @@ export enum ShieldEventType {
   SessionExpired = "shield.session.expired",
   SessionArchived = "shield.session.archived",
 
-  // Content (5)
+  // Content (6)
   ContentUploaded = "shield.content.uploaded",
   ContentViewed = "shield.content.viewed",
   ContentDownloaded = "shield.content.downloaded",
   ContentDeleted = "shield.content.deleted",
   ContentHashVerified = "shield.content.hash.verified",
+  ContentSubmitted = "shield.content.submitted",
 
   // Negotiation (7)
   NegotiationTermsProposed = "shield.negotiation.terms.proposed",
@@ -118,6 +119,27 @@ export interface CreateEventParams {
 }
 
 export type ExportFormat = "json" | "pdf";
+
+export interface AgentEventParams {
+  event_type: ShieldEventType | string;
+  /** At least one of agent_id or agent_name is required. */
+  agent_id?: string;
+  agent_name?: string;
+  agent_provider?: string;
+  principal_user_id?: string;
+  authority_scope?: string[];
+  model?: string;
+  model_version?: string;
+  /** Bare 64-character lowercase SHA-256 hex digest — no prefix. */
+  prompt_hash?: string;
+  /** Bare 64-character lowercase SHA-256 hex digest — no prefix. */
+  input_hash?: string;
+  /** Bare 64-character lowercase SHA-256 hex digest — no prefix. */
+  output_hash?: string;
+  human_approval_event_id?: string;
+  parent_event_id?: string;
+  data?: Record<string, unknown>;
+}
 
 export interface ShieldClientOptions {
   baseUrl?: string;

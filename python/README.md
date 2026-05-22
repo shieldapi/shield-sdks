@@ -5,7 +5,7 @@ Official Python SDK for [Shield](https://getshield.dev) ??tamper-evident session
 ## Installation
 
 ```bash
-pip install shield-python==0.3.0
+pip install shield-python==0.3.1
 ```
 
 ## Quick Start
@@ -31,7 +31,7 @@ client.events.create(
     session_id=session_id,
     event_type="shield.content.uploaded",
     actor="agent@example.com",
-    data={"filename": "purchase_agreement.pdf", "hash": "sha256:abc123..."},
+    data={"filename": "purchase_agreement.pdf"},
 )
 
 client.events.create(
@@ -43,18 +43,39 @@ client.events.create(
 
 # Verify session integrity
 result = client.verify.session(session_id)
-print(result["valid"])            # True
-print(result["total_events"])     # 3
-print(result["verified_events"])  # 3
-print(result["broken_at"])        # None (or sequence number if tampered)
-print(result["tsa_status"])       # "none" | "pending" | "success" | "failed"
-print(result["tsa_timestamp"])    # None or ISO 8601 timestamp
+print(result["valid"])  # True
 
 # Export session
 pdf_bytes = client.sessions.export(session_id, format="pdf")
 with open("audit_trail.pdf", "wb") as f:
     f.write(pdf_bytes)
 ```
+
+## Recording AI Agent Evidence
+
+```python
+import hashlib
+
+# Hash content locally — never send raw prompts or outputs to Shield
+prompt_hash = hashlib.sha256(my_prompt.encode()).hexdigest()
+output_hash = hashlib.sha256(agent_output.encode()).hexdigest()
+
+event = client.agent.log_action(
+    session_id,
+    "shield.content.submitted",
+    agent_id="agt-unique-identifier",
+    agent_name="gpt-4o",
+    agent_provider="OpenAI",
+    principal_user_id="alice@example.com",
+    prompt_hash=prompt_hash,   # bare 64-char lowercase hex
+    output_hash=output_hash,
+)
+```
+
+At least one of `agent_id` or `agent_name` is required. Hash fields
+(`prompt_hash`, `input_hash`, `output_hash`) must be bare 64-character
+lowercase SHA-256 hex digests (no prefix). Values of incorrect format or
+length raise `ShieldError`.
 
 ## HMAC Authentication
 
@@ -184,31 +205,9 @@ async def verify_session(session_id: str):
     return client.verify.session(session_id)
 ```
 
-## Error Handling
-
-```python
-from shield.exceptions import ShieldError
-
-try:
-    event = client.events.create(
-        session_id=session_id,
-        event_type="shield.agreement.signed",
-        actor="user@company.com",
-    )
-except ShieldError as e:
-    if e.code == "plan_limit_exceeded":
-        # notify admin to upgrade
-        pass
-    elif e.code == "rate_limited":
-        import time
-        time.sleep(e.retry_after)
-    else:
-        raise
-```
-
 ## Event Types Reference
 
-Shield Standard Event Taxonomy v1.0 — 39 event types across 8 categories:
+Shield Standard Event Taxonomy v1.0 — 40 event types across 8 categories:
 
 ### Party Events
 | Event Type | Description |
@@ -236,6 +235,7 @@ Shield Standard Event Taxonomy v1.0 — 39 event types across 8 categories:
 | `shield.content.downloaded` | Content was downloaded |
 | `shield.content.deleted` | Content was deleted |
 | `shield.content.hash.verified` | Content hash was verified |
+| `shield.content.submitted` | Content or analysis was submitted by an AI agent |
 
 ### Negotiation Events
 | Event Type | Description |
@@ -280,3 +280,12 @@ Shield Standard Event Taxonomy v1.0 — 39 event types across 8 categories:
 | `shield.evidence.exported` | Evidence was exported |
 | `shield.evidence.verified` | Evidence was verified |
 | `shield.evidence.tampered_detected` | Evidence tampering was detected |
+
+## Versioning & API compatibility
+
+This SDK follows [Semantic Versioning](https://semver.org/).
+
+- **Pre-1.0** (current): minor-version bumps may ship breaking changes. Pin the full version in `requirements.txt`.
+- **1.0 and later**: the public API is stable within a major version. Breaking changes require a major-version bump.
+
+The Shield HTTP API is versioned at the URL path (`/api/v1`). This SDK targets `/api/v1` and will not transparently follow a server-side version bump — a new server major version will be delivered as a new SDK major version so callers opt in explicitly.

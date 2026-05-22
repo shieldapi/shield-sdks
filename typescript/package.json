@@ -1,11 +1,12 @@
 {
   "name": "@getshield/js",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Official Shield SDK for JavaScript/TypeScript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
+    "test": "npm run build && node --test tests/signing.test.js tests/agent.test.js",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
