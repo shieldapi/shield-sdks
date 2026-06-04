@@ -6,24 +6,18 @@ package dev.getshield.exception;
 public class ShieldException extends RuntimeException {
 
     private final int statusCode;
-    private final String code;
 
-    public ShieldException(int statusCode, String code, String message) {
+    public ShieldException(int statusCode, String message) {
         super(message);
         this.statusCode = statusCode;
-        this.code = code;
     }
 
     public int getStatusCode() {
         return statusCode;
     }
 
-    public String getCode() {
-        return code;
-    }
-
     @Override
     public String toString() {
-        return String.format("ShieldException{status=%d, code='%s', message='%s'}", statusCode, code, getMessage());
+        return String.format("ShieldException{status=%d, message='%s'}", statusCode, getMessage());
     }
 }
