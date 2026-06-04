@@ -10,14 +10,14 @@ Official Java SDK for [Shield](https://getshield.dev) — tamper-proof audit tra
 <dependency>
     <groupId>dev.getshield</groupId>
     <artifactId>shield-java</artifactId>
-    <version>0.3.1</version>
+    <version>0.4.0</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```groovy
-implementation 'dev.getshield:shield-java:0.3.1'
+implementation 'dev.getshield:shield-java:0.4.0'
 ```
 
 ## Requirements

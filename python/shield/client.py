@@ -15,7 +15,7 @@ from .resources.agent import Agent
 
 # ARCH-019: kept static to avoid leaking Python version / OS into server logs.
 # Bumped alongside setup.py version on each release.
-SDK_USER_AGENT = "shield-python/0.3.1"
+SDK_USER_AGENT = "shield-python/0.4.0"
 
 
 class Client:

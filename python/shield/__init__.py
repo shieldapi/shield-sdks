@@ -3,4 +3,4 @@ from .exceptions import ShieldError
 from .resources.agent import Agent
 
 __all__ = ["Client", "ShieldError", "Agent"]
-__version__ = "0.3.1"
+__version__ = "0.4.0"

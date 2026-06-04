@@ -5,7 +5,7 @@ Official Python SDK for [Shield](https://getshield.dev) ??tamper-evident session
 ## Installation
 
 ```bash
-pip install shield-python==0.3.1
+pip install shield-python==0.4.0
 ```
 
 ## Quick Start
