@@ -5,15 +5,20 @@ Official Python SDK for [Shield](https://getshield.dev) ??tamper-evident session
 ## Installation
 
 ```bash
-pip install shield-python==0.4.0
+pip install shield-python==0.4.1
 ```
 
 ## Quick Start
 
+Both `Client` and `ShieldClient` are available — they are identical. `ShieldClient` matches the TypeScript SDK naming convention.
+
 ```python
 import shield
 
-client = shield.Client(api_key="sk_live_your_api_key")
+# Either name works — they are the same class
+client = shield.Client(api_key="sk_live_your_api_key", hmac_secret="your_hmac_secret")
+# or
+client = shield.ShieldClient(api_key="sk_live_your_api_key", hmac_secret="your_hmac_secret")
 
 # Create a session
 session = client.sessions.create(title="Contract Negotiation with Acme Corp")
