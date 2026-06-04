@@ -8,7 +8,7 @@ import { AgentEvents } from "./resources/agent_events";
 
 // ARCH-019: kept static so the SDK does not leak runtime (node version) or OS
 // into server logs. Bumped alongside package.json version on each release.
-export const SDK_USER_AGENT = "shield-js/0.3.1";
+export const SDK_USER_AGENT = "shield-js/0.4.0";
 
 export class ShieldClient {
   private apiKey: string;

@@ -1,0 +1,7 @@
+# Exclude source and dev files from the published package.
+# Only dist/, README.md, CHANGELOG.md, package.json, and LICENSE are needed by consumers.
+src/
+tests/
+tsconfig.json
+*.tgz
+node_modules/
