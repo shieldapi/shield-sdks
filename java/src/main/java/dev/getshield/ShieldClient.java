@@ -33,7 +33,7 @@ public class ShieldClient {
 
     // ARCH-019: kept static so the SDK does not leak JVM version / OS into
     // server logs. Bumped alongside pom.xml version on each release.
-    public static final String SDK_USER_AGENT = "shield-java/0.3.1";
+    public static final String SDK_USER_AGENT = "shield-java/0.4.0";
 
     private final String apiKey;
     private final String baseUrl;
