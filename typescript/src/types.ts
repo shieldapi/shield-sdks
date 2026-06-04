@@ -1,5 +1,5 @@
 /**
- * Shield Standard Event Taxonomy v1.0 — 39 event types.
+ * Shield Standard Event Taxonomy v1.0 — 40 event types.
  */
 export enum ShieldEventType {
   // Party (5)
@@ -16,12 +16,13 @@ export enum ShieldEventType {
   SessionExpired = "shield.session.expired",
   SessionArchived = "shield.session.archived",
 
-  // Content (5)
+  // Content (6)
   ContentUploaded = "shield.content.uploaded",
   ContentViewed = "shield.content.viewed",
   ContentDownloaded = "shield.content.downloaded",
   ContentDeleted = "shield.content.deleted",
   ContentHashVerified = "shield.content.hash.verified",
+  ContentSubmitted = "shield.content.submitted",
 
   // Negotiation (7)
   NegotiationTermsProposed = "shield.negotiation.terms.proposed",
@@ -56,6 +57,108 @@ export enum ShieldEventType {
   EvidenceExported = "shield.evidence.exported",
   EvidenceVerified = "shield.evidence.verified",
   EvidenceTamperedDetected = "shield.evidence.tampered_detected",
+}
+
+/**
+ * shield.agent.action.* event types for Agent Action Evidence v1.
+ */
+export enum AgentActionEventType {
+  Navigated              = "shield.agent.action.navigated",
+  Clicked                = "shield.agent.action.clicked",
+  InputFilled            = "shield.agent.action.input_filled",
+  Submitted              = "shield.agent.action.submitted",
+  Confirmed              = "shield.agent.action.confirmed",
+  PaymentInitiated       = "shield.agent.action.payment_initiated",
+  PaymentConfirmed       = "shield.agent.action.payment_confirmed",
+  ToolCalled             = "shield.agent.action.tool_called",
+  HumanApprovalRequested = "shield.agent.action.human_approval_requested",
+  HumanApprovalGranted   = "shield.agent.action.human_approval_granted",
+}
+
+/**
+ * Structured evidence for shield.agent.action.* events.
+ * Hash fields must be bare 64-character lowercase SHA-256 hex digests (no sha256: prefix).
+ */
+export interface ActionEvidenceParams {
+  action_type?: string;
+  target_url?: string;
+  page_title?: string;
+  element_selector?: string;
+  element_text?: string;
+  /** Bare 64-char lowercase SHA-256 hex digest of the screenshot before the action. */
+  screenshot_before_hash?: string;
+  /** Bare 64-char lowercase SHA-256 hex digest of the screenshot after the action. */
+  screenshot_after_hash?: string;
+  /** Bare 64-char lowercase SHA-256 hex digest of the DOM before the action. */
+  dom_before_hash?: string;
+  /** Bare 64-char lowercase SHA-256 hex digest of the DOM after the action. */
+  dom_after_hash?: string;
+  browser_session_id?: string;
+  tool_call_id?: string;
+  risk_level?: string;
+  /** Required for payment_initiated / payment_confirmed. */
+  amount?: number;
+  /** Required for payment_initiated / payment_confirmed. */
+  currency?: string;
+  result?: string;
+  /**
+   * Optional references to externally-stored evidence artifacts.
+   * Each artifact's sha256 is sealed into the hash chain. Shield does not store raw bytes.
+   */
+  evidence_artifacts?: EvidenceArtifact[];
+}
+
+/** Allowed artifact_type values for EvidenceArtifact. */
+export type ArtifactType =
+  | "screenshot_before"
+  | "screenshot_after"
+  | "dom_before"
+  | "dom_after"
+  | "input"
+  | "output"
+  | "trace"
+  | "receipt"
+  | "other";
+
+/** Allowed storage_provider values for EvidenceArtifact. */
+export type StorageProvider =
+  | "customer_s3"
+  | "customer_r2"
+  | "customer_gcs"
+  | "customer_azure_blob"
+  | "shield_storage"
+  | "external";
+
+/**
+ * A reference to an externally-stored evidence artifact.
+ * Shield seals the uri + sha256 into the tamper-evident hash chain.
+ * Shield does NOT store raw artifact bytes — callers upload to their own
+ * storage and pass the resulting uri + sha256 here.
+ */
+export interface EvidenceArtifact {
+  /** Required. Classifies the artifact. */
+  artifact_type: ArtifactType;
+  /**
+   * Required. Bare 64-character lowercase SHA-256 hex digest of the artifact bytes.
+   * No "sha256:" prefix. Used by Shield to detect tampering.
+   */
+  sha256: string;
+  /** URI of the artifact in external storage (http/https/s3/gs/azure/r2). */
+  uri?: string;
+  /** Identifies the storage backend. */
+  storage_provider?: StorageProvider;
+  /** MIME type (e.g. "image/png", "text/html"). Max 128 chars. */
+  content_type?: string;
+  /** Size of the artifact in bytes. Must be >= 0. */
+  size_bytes?: number;
+  /** RFC3339 timestamp when the artifact was captured. */
+  captured_at?: string;
+  /** Customer-defined retention label. Max 128 chars. */
+  retention_policy?: string;
+  /** Whether PII redaction was applied before storage. */
+  redaction_applied?: boolean;
+  /** Additional customer-defined metadata. Max 4096 bytes when serialized. */
+  metadata?: Record<string, unknown>;
 }
 
 export interface ShieldEvent {
@@ -118,6 +221,34 @@ export interface CreateEventParams {
 }
 
 export type ExportFormat = "json" | "pdf";
+
+export interface AgentEventParams {
+  event_type: ShieldEventType | string;
+  /**
+   * Display identifier for the actor performing the action (e.g. the agent ID,
+   * agent name, or a descriptive label). Defaults to agent_id ?? agent_name ??
+   * "agent" when omitted by callers who use the Playwright or MCP adapters.
+   * Required by the backend; omitting it sends no actor label.
+   */
+  actor?: string;
+  /** At least one of agent_id or agent_name is required. */
+  agent_id?: string;
+  agent_name?: string;
+  agent_provider?: string;
+  principal_user_id?: string;
+  authority_scope?: string[];
+  model?: string;
+  model_version?: string;
+  /** Bare 64-character lowercase SHA-256 hex digest — no prefix. */
+  prompt_hash?: string;
+  /** Bare 64-character lowercase SHA-256 hex digest — no prefix. */
+  input_hash?: string;
+  /** Bare 64-character lowercase SHA-256 hex digest — no prefix. */
+  output_hash?: string;
+  human_approval_event_id?: string;
+  parent_event_id?: string;
+  data?: Record<string, unknown>;
+}
 
 export interface ShieldClientOptions {
   baseUrl?: string;
