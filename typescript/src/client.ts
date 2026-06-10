@@ -8,7 +8,7 @@ import { AgentEvents } from "./resources/agent_events";
 
 // ARCH-019: kept static so the SDK does not leak runtime (node version) or OS
 // into server logs. Bumped alongside package.json version on each release.
-export const SDK_USER_AGENT = "shield-js/0.4.0";
+export const SDK_USER_AGENT = "shield-js/0.5.0";
 
 export class ShieldClient {
   private apiKey: string;
@@ -78,8 +78,10 @@ export class ShieldClient {
       // via http.Request.URL.RequestURI(). A caller passing different query
       // strings against the same path yields different signatures, preventing
       // query-tampering replays.
+      // H-1 (v0.5.0): nonce is sealed into the signed message so a captured
+      // request cannot be replayed with a fresh nonce inside the timestamp window.
       const pathWithQuery = this.baseUrlPath + path;
-      const message = `${timestamp}.${method}.${pathWithQuery}.${bodyHash}`;
+      const message = `${timestamp}.${nonce}.${method}.${pathWithQuery}.${bodyHash}`;
       const signature = crypto
         .createHmac("sha256", this.hmacSecret)
         .update(message)

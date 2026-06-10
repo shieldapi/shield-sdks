@@ -15,7 +15,7 @@ from .resources.agent import Agent
 
 # ARCH-019: kept static to avoid leaking Python version / OS into server logs.
 # Bumped alongside setup.py version on each release.
-SDK_USER_AGENT = "shield-python/0.4.1"
+SDK_USER_AGENT = "shield-python/0.5.0"
 
 
 class Client:
@@ -120,7 +120,8 @@ class Client:
             timestamp = str(int(time.time()))
             nonce = str(uuid.uuid4())
             body_hash = hashlib.sha256(body).hexdigest()
-            message = f"{timestamp}.{method}.{self._base_url_path}{path_with_query}.{body_hash}"
+            # H-1 (v0.5.0): nonce sealed into message — replay with fresh nonce blocked.
+            message = f"{timestamp}.{nonce}.{method}.{self._base_url_path}{path_with_query}.{body_hash}"
             signature = hmac_mod.new(
                 self.hmac_secret.encode("utf-8"),
                 message.encode("utf-8"),

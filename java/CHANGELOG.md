@@ -3,6 +3,16 @@
 All notable changes to `dev.getshield:shield-java` are documented in this file.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## [0.5.0] - 2026-06-10
+
+### Breaking Changes
+
+- **HMAC signature message now includes the nonce** (server AUDIT H-1). The
+  canonical message changed from `timestamp.METHOD.requestURI.bodyHash` to
+  `timestamp.nonce.METHOD.requestURI.bodyHash`. A captured request can no longer
+  be replayed with a fresh nonce inside the timestamp window. **Requires Shield
+  API ≥ 0.5.0.** No application code changes needed — signing is internal.
+
 ## [0.4.0] - 2026-06-04
 
 ### Added

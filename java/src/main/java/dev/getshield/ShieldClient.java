@@ -33,7 +33,7 @@ public class ShieldClient {
 
     // ARCH-019: kept static so the SDK does not leak JVM version / OS into
     // server logs. Bumped alongside pom.xml version on each release.
-    public static final String SDK_USER_AGENT = "shield-java/0.4.0";
+    public static final String SDK_USER_AGENT = "shield-java/0.5.0";
 
     private final String apiKey;
     private final String baseUrl;
@@ -141,7 +141,8 @@ public class ShieldClient {
                 // so stripping to URL.getPath() would break query-tampering
                 // protection.
                 String pathWithQuery = baseUrlPath + path;
-                String message = timestamp + "." + method.toUpperCase() + "." + pathWithQuery + "." + bodyHash;
+                // H-1 (v0.5.0): nonce sealed into message — replay with fresh nonce blocked.
+                String message = timestamp + "." + nonce + "." + method.toUpperCase() + "." + pathWithQuery + "." + bodyHash;
                 String signature = hmacSha256Hex(message, hmacSecret);
 
                 builder.header("X-Shield-Timestamp", timestamp);
@@ -216,7 +217,8 @@ public class ShieldClient {
                 String nonce = java.util.UUID.randomUUID().toString();
                 String bodyHash = sha256Hex(new byte[0]);
                 String pathWithQuery = baseUrlPath + path;
-                String message = timestamp + ".GET." + pathWithQuery + "." + bodyHash;
+                // H-1 (v0.5.0): nonce sealed into message.
+                String message = timestamp + "." + nonce + ".GET." + pathWithQuery + "." + bodyHash;
                 String signature = hmacSha256Hex(message, hmacSecret);
                 builder.header("X-Shield-Timestamp", timestamp);
                 builder.header("X-Shield-Signature", signature);
