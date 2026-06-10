@@ -5,7 +5,7 @@ Official Python SDK for [Shield](https://getshield.dev) ??tamper-evident session
 ## Installation
 
 ```bash
-pip install shield-python==0.4.1
+pip install shield-python==0.5.0
 ```
 
 ## Quick Start
@@ -96,7 +96,7 @@ client = shield.Client(
 When an HMAC secret is configured, the SDK computes a signature for each request:
 
 - `X-Shield-Timestamp` ??Unix timestamp of the request
-- `X-Shield-Signature` ??HMAC-SHA256 of `{timestamp}.{METHOD}.{path}.{SHA256(body)}`
+- `X-Shield-Signature` — HMAC-SHA256 of `{timestamp}.{nonce}.{METHOD}.{path}.{SHA256(body)}`
 
 The server validates these headers to ensure requests have not been tampered with or replayed.
 

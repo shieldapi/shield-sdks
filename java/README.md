@@ -10,14 +10,14 @@ Official Java SDK for [Shield](https://getshield.dev) — tamper-proof audit tra
 <dependency>
     <groupId>dev.getshield</groupId>
     <artifactId>shield-java</artifactId>
-    <version>0.4.0</version>
+    <version>0.5.0</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```groovy
-implementation 'dev.getshield:shield-java:0.4.0'
+implementation 'dev.getshield:shield-java:0.5.0'
 ```
 
 ## Requirements
@@ -104,9 +104,9 @@ ShieldClient client = new ShieldClient(
 
 The SDK automatically computes `X-Shield-Signature` and `X-Shield-Timestamp` headers for every request.
 
-Signature algorithm:
+Signature algorithm (v0.5.0+):
 ```
-message = timestamp + "." + METHOD + "." + path + "." + hex(SHA256(body))
+message = timestamp + "." + nonce + "." + METHOD + "." + path + "." + hex(SHA256(body))
 X-Shield-Signature = hex(HMAC-SHA256(message, hmac_secret))
 ```
 
